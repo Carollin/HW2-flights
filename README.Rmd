@@ -1,0 +1,80 @@
+---
+title: "HW2 flights"
+author: "Chenyi Lin"
+date: "2/10/2021"
+output: github_document
+---
+
+```{r}
+library(nycflights13)
+library('tidyverse')
+library(tibble)
+```
+```{r}
+flights
+```
+```{r}
+dec25<-filter(flights, month ==1, day == 25)
+dec25
+```
+```{r}
+sum(is.na(flights$dep_time))
+```
+1. There is 8255 missing data in dep_time.
+```{r}
+sum(is.na(flights$dep_delay))
+```
+
+```{r}
+sum(is.na(flights$arr_time))
+```
+```{r}
+sum(is.na(flights$arr_delay))
+```
+
+```{r}
+sum(is.na(flights$tailnum))
+```
+```{r}
+sum(is.na(flights$air_time))
+```
+2. There are many missing data in arr_time, arr_delay,dep_delay,tailnum, air_time. 
+
+
+```{r}
+newdep_time = (floor(flights$dep_time/100)*60)+(flights$dep_time %%100)
+
+```
+
+```{r}
+newflights <- flights[,!(colnames(flights) %in% c("dep_time"))]
+newflights
+
+```
+```{r}
+add_column(newflights, newdep_time = newdep_time,.after = 3)
+```
+```{r}
+b <-flights %>% group_by(month,day) %>% summarize(mean(dep_delay,na.rm = T),.groups = "drop")
+b
+```
+
+```{r}
+a <- flights %>% 
+  group_by(month,day) %>% 
+  summarise(mean(is.na(dep_time)),.groups = "drop")
+a
+```
+```{r}
+ggplot(a,aes(x= month,y=`mean(is.na(dep_time))`))+
+  geom_point()
+```
+```{r}
+ggplot(b,aes(x=month,y=`mean(dep_delay, na.rm = T)`))+
+  geom_point()
+```
+
+##conclusion
+
+There is no obviious realtion between the cancelled flights and dep_delay. 
+
